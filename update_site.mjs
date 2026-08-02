@@ -7,25 +7,48 @@ import crypto from 'node:crypto';
 
 const ROOT = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
 const MID = process.env.BILI_MID || '387685252';
-const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
+const UAS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+];
 const MIXIN_KEY_ENC_TAB = [46,47,18,2,53,8,23,32,15,50,10,31,58,3,45,35,27,43,5,49,33,9,42,19,29,28,14,39,12,38,41,13,37,48,7,16,24,55,40,61,26,17,0,1,60,51,30,4,22,25,54,21,56,59,6,63,57,62,11,36,20,34,44,52];
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const pickUA = () => UAS[Math.floor(Math.random() * UAS.length)];
+let COOKIE = '';
 
-async function fetchJson(url, headers = {}, retries = 4) {
+// 先访问 B 站主页拿 buvid3 cookie（风控关键），拿不到也不致命
+async function primeCookie() {
+  try {
+    const res = await fetch('https://www.bilibili.com/', { headers: { 'User-Agent': pickUA() }, redirect: 'follow' });
+    const setCookies = res.headers.getSetCookie ? res.headers.getSetCookie() : [];
+    const parts = [];
+    for (const c of setCookies) { const name = c.split('=')[0]; if (name && !['_uuid','b_nut'].includes(name)) parts.push(c.split(';')[0]); }
+    if (setCookies.length) COOKIE = parts.join('; ');
+    console.log('   [cookie] 已获取 buvid3: ' + (COOKIE.includes('buvid3') ? 'OK' : '无'));
+  } catch (e) {
+    console.log('   [cookie] 获取失败（继续尝试）: ' + e.message);
+  }
+}
+
+async function fetchJson(url, headers = {}, retries = 5) {
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA, Referer: 'https://www.bilibili.com/', ...headers } });
+      const h = { 'User-Agent': pickUA(), Referer: 'https://www.bilibili.com/', Accept: 'application/json, text/plain, */*', ...headers };
+      if (COOKIE) h.Cookie = COOKIE;
+      const res = await fetch(url, { headers: h });
       const text = await res.text();
       if (!text.trim().startsWith('{')) {
-        console.log(`  [warn] 非JSON响应(第${i + 1}次):`, text.slice(0, 60));
-        await sleep(2000 * (i + 1));
+        console.log(`  [warn] 非JSON响应(第${i + 1}次, HTTP ${res.status}):`, text.slice(0, 60).replace(/\s+/g, ' '));
+        await sleep(2500 * (i + 1));
         continue;
       }
       return JSON.parse(text);
     } catch (e) {
       if (i === retries - 1) throw e;
-      await sleep(2000 * (i + 1));
+      await sleep(2500 * (i + 1));
     }
   }
   throw new Error('fetch failed: ' + url);
@@ -54,7 +77,9 @@ function encWbi(params, mixinKey) {
 async function download(url, dest, retries = 4) {
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA, Referer: 'https://www.bilibili.com/' } });
+      const h = { 'User-Agent': pickUA(), Referer: 'https://www.bilibili.com/' };
+      if (COOKIE) h.Cookie = COOKIE;
+      const res = await fetch(url, { headers: h });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const buf = Buffer.from(await res.arrayBuffer());
       if (buf.length < 800) throw new Error('too small ' + buf.length);
@@ -68,23 +93,74 @@ async function download(url, dest, retries = 4) {
   throw new Error('download failed: ' + url);
 }
 
-// ---------- 1. 拉取视频列表 ----------
+// ---------- 1. 拉取视频列表（双通道：主=列表接口，备=view详情刷新） ----------
 console.log('▶ 1/4 拉取最新视频数据 (mid=' + MID + ') ...');
-const mixinKey = await getWbiKey();
-const videos = [];
-let pn = 1;
-while (true) {
-  const q = encWbi({ mid: MID, pn, ps: 50, order: 'pubdate', platform: 'web' }, mixinKey);
-  const v = await fetchJson(`https://api.bilibili.com/x/space/wbi/arc/search?${q}`);
-  if (v.code !== 0 || !v.data?.list?.vlist?.length) { console.log('  [warn] 分页结束 code=' + v.code); break; }
-  videos.push(...v.data.list.vlist);
-  if (videos.length >= v.data.page.count) break;
-  pn++;
-  await sleep(500);
+await primeCookie();
+let videos = [];
+let usedCache = false;
+
+// 主通道：WBI 签名列表接口
+async function fetchList() {
+  const mixinKey = await getWbiKey();
+  let out = [];
+  let pn = 1;
+  while (true) {
+    const q = encWbi({ mid: MID, pn, ps: 50, order: 'pubdate', platform: 'web' }, mixinKey);
+    const v = await fetchJson(`https://api.bilibili.com/x/space/wbi/arc/search?${q}`);
+    if (v.code !== 0 || !v.data?.list?.vlist?.length) { console.log('  [warn] 分页结束 code=' + v.code); break; }
+    out.push(...v.data.list.vlist);
+    if (out.length >= v.data.page.count) break;
+    pn++;
+    await sleep(600);
+  }
+  return out;
 }
-if (!videos.length) { console.error('✘ 没有拉到任何视频，退出'); process.exit(1); }
+
+try {
+  videos = await fetchList();
+} catch (e) {
+  console.log('  [warn] 列表接口异常: ' + e.message);
+}
+
+// 备用通道：用缓存的 bvid 列表 + view 接口刷新详情（view 接口风控宽松，确定可用）
+if (!videos.length) {
+  const cachePath = path.join(ROOT, 'user_videos.json');
+  if (fs.existsSync(cachePath)) {
+    const cached = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+    if (cached.length) {
+      console.log(`  [fallback] 列表接口不可用，改用 view 详情接口刷新 ${cached.length} 个缓存视频 ...`);
+      const refreshed = [];
+      for (let i = 0; i < cached.length; i++) {
+        const bvid = cached[i].bvid;
+        try {
+          const v = await fetchJson(`https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`);
+          if (v.code === 0 && v.data) {
+            const d = v.data;
+            refreshed.push({
+              bvid: d.bvid,
+              title: d.title,
+              pic: d.pic,
+              play: d.stat.view,
+              length: (() => { const s = d.duration; return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); })(),
+              created: d.pubdate,
+              comment: d.stat.reply,
+            });
+          } else {
+            refreshed.push(cached[i]);
+          }
+        } catch (err) {
+          refreshed.push(cached[i]);
+        }
+        if (i % 10 === 9) { console.log(`   ...已刷新 ${i + 1}/${cached.length}`); await sleep(400); }
+      }
+      videos = refreshed;
+      usedCache = true;
+    }
+  }
+}
+if (!videos.length) { console.error('✘ 没有任何数据且无缓存可用，退出'); process.exit(1); }
 fs.writeFileSync(path.join(ROOT, 'user_videos.json'), JSON.stringify(videos, null, 2), 'utf8');
-console.log(`   共 ${videos.length} 个视频`);
+console.log(`   共 ${videos.length} 个视频` + (usedCache ? '（view接口刷新模式）' : ''));
 
 // ---------- 2. 下载新封面 ----------
 console.log('▶ 2/4 同步封面图片（仅下载新增）...');
