@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>冰某氚ICE-T · 作战日志</title>
+<style>
+:root{--bg:#0b0f0c;--bg2:#0f140f;--panel:#141a13;--panel2:#1a2118;--line:#2a3427;--line2:#3a4638;--brass:#c9a15a;--brass-hi:#e6c37e;--brass-dim:#8a6f3c;--red:#b3392b;--red-hi:#d34a38;--paper:#e6dcc0;--text:#d9d3bd;--muted:#8f947d;--stencil:Impact,'Arial Black','SimHei',sans-serif;--serif:Georgia,'Songti SC','STSong','SimSun',serif;--sans:'PingFang SC','Microsoft YaHei','Hiragino Sans GB',sans-serif;--mono:'Courier New','Sarasa Mono SC',Consolas,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+::selection{background:var(--brass);color:#1a1206}
+a{color:inherit;text-decoration:none}
+.ticker{background:var(--red);color:#f3ead6;font-family:var(--mono);font-size:12px;letter-spacing:.18em;padding:7px 0;overflow:hidden;white-space:nowrap;border-bottom:1px solid #000}
+.ticker span{display:inline-block;padding-left:100%;animation:tick 36s linear infinite}
+@keyframes tick{to{transform:translateX(-100%)}}
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding:70px 6vw 60px;overflow:hidden;background:radial-gradient(1200px 600px at 78% 18%,rgba(201,161,90,.09),transparent 60%),radial-gradient(900px 500px at 10% 85%,rgba(179,57,43,.07),transparent 60%),var(--bg2)}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:linear-gradient(rgba(201,161,90,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,161,90,.05) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 78%)}
+.hero::after{content:'';position:absolute;right:-180px;top:-180px;width:560px;height:560px;border-radius:50%;background:conic-gradient(from 0deg,rgba(201,161,90,.16),transparent 16%);animation:radar 7s linear infinite;border:1px solid rgba(201,161,90,.12);box-shadow:inset 0 0 80px rgba(201,161,90,.05)}
+@keyframes radar{to{transform:rotate(360deg)}}
+.watermark{position:absolute;right:2vw;bottom:-4vw;font-family:var(--stencil);font-size:clamp(120px,22vw,320px);color:transparent;line-height:1;pointer-events:none;-webkit-text-stroke:1px rgba(201,161,90,.10);letter-spacing:.02em;user-select:none}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr;gap:clamp(30px,5vw,80px);align-items:center;max-width:1200px;margin:0 auto;width:100%}
+.avatar-wrap{position:relative;width:clamp(150px,20vw,230px);height:clamp(150px,20vw,230px)}
+.avatar-ring{position:absolute;inset:0;border-radius:50%;border:1px dashed var(--brass-dim);animation:spin 22s linear infinite}
+.avatar-ring::before,.avatar-ring::after{content:'';position:absolute;width:10px;height:10px;background:var(--brass);border-radius:50%}
+.avatar-ring::before{top:-5px;left:50%;transform:translateX(-50%)}
+.avatar-ring::after{bottom:-5px;right:8%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.avatar-frame{position:absolute;inset:14px;border-radius:50%;overflow:hidden;border:3px solid var(--brass);box-shadow:0 0 0 6px rgba(201,161,90,.14),0 0 60px rgba(201,161,90,.25);background:#1a1206}
+.avatar-frame img{width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.05)}
+.avatar-frame::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 30% 25%,transparent 55%,rgba(0,0,0,.45))}
+.stamp{position:absolute;padding:6px 12px;font-family:var(--stencil);letter-spacing:.28em;font-size:14px;color:var(--red-hi);border:3px double var(--red-hi);border-radius:4px;background:rgba(11,15,12,.72);transform:rotate(-14deg);user-select:none;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.stamp.top{top:-6px;right:-26px;animation:stampIn .8s cubic-bezier(.2,1.6,.4,1) .7s backwards}
+.stamp.bot{bottom:2px;left:-40px;transform:rotate(9deg);animation:stampIn .8s cubic-bezier(.2,1.6,.4,1) 1s backwards}
+@keyframes stampIn{from{opacity:0;transform:scale(1.6) rotate(-20deg)}}
+.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.4em;color:var(--brass);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.kicker::before{content:'';width:46px;height:1px;background:var(--brass)}
+.name-cn{font-family:var(--serif);font-size:clamp(38px,6vw,72px);font-weight:700;color:var(--paper);letter-spacing:.06em;line-height:1.15}
+.name-cn em{font-style:normal;color:var(--brass-hi)}
+.name-en{font-family:var(--stencil);font-size:clamp(26px,3.6vw,44px);letter-spacing:.1em;color:transparent;-webkit-text-stroke:1px rgba(230,195,126,.75);margin:6px 0 18px}
+.motto{display:inline-flex;align-items:center;gap:10px;font-family:var(--serif);font-size:clamp(16px,1.6vw,20px);color:var(--text);border-left:3px solid var(--red);padding-left:14px;margin-bottom:26px}
+.motto b{color:var(--brass-hi);font-weight:700}
+.stats-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+.chip{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;border:1px solid var(--line2);background:rgba(20,26,19,.7);padding:6px 14px;border-radius:2px;color:var(--muted)}
+.chip b{color:var(--brass-hi);font-weight:700;font-size:14px;margin-right:4px}
+.cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{font-family:var(--stencil);letter-spacing:.22em;font-size:15px;padding:13px 26px;border:1px solid var(--brass);color:var(--brass-hi);position:relative;transition:.25s;background:transparent;cursor:pointer}
+.btn::after{content:'';position:absolute;left:6px;top:6px;right:-6px;bottom:-6px;border:1px solid rgba(201,161,90,.35);transition:.25s;z-index:-1}
+.btn:hover{background:var(--brass);color:#1a1206;box-shadow:0 0 34px rgba(201,161,90,.35)}
+.btn:hover::after{right:0;bottom:0;left:0;top:0}
+.btn.solid{background:var(--red);border-color:var(--red);color:#f3ead6}
+.btn.solid::after{border-color:rgba(179,57,43,.5)}
+.btn.solid:hover{background:var(--red-hi)}
+.databar{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2);display:grid;grid-template-columns:repeat(4,1fr)}
+.dcell{padding:30px 26px;text-align:center;border-right:1px solid var(--line);position:relative}
+.dcell:last-child{border-right:none}
+.dcell .num{font-family:var(--stencil);font-size:clamp(28px,3.4vw,46px);color:var(--paper);letter-spacing:.04em}
+.dcell .num small{font-size:.45em;color:var(--brass);letter-spacing:.1em;margin-left:4px}
+.dcell .lbl{font-family:var(--mono);font-size:11.5px;letter-spacing:.34em;color:var(--muted);margin-top:6px;text-transform:uppercase}
+.dcell .sub{font-size:12px;color:var(--muted);margin-top:4px;font-family:var(--serif)}
+.dcell::before{content:'';position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--red);transition:width .6s ease}
+.dcell:hover::before{width:100%}
+section{position:relative;padding:80px 6vw}
+.section-head{max-width:1200px;margin:0 auto 44px}
+.sec-tag{font-family:var(--mono);font-size:12px;letter-spacing:.42em;color:var(--brass);text-transform:uppercase;display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.sec-tag::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent)}
+.sec-title{font-family:var(--serif);font-size:clamp(26px,3.4vw,40px);color:var(--paper);font-weight:700;letter-spacing:.04em}
+.sec-title .en{font-family:var(--stencil);color:var(--brass-dim);font-size:.5em;letter-spacing:.3em;vertical-align:middle;margin-left:12px}
+.series{background:linear-gradient(rgba(179,57,43,.05),rgba(179,57,43,.05)),var(--bg)}
+.series-band{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.scard{position:relative;border:1px solid var(--line);background:var(--panel);overflow:hidden;transition:.35s;cursor:pointer;display:block}
+.scard:hover{transform:translateY(-6px);border-color:var(--brass-dim);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.scard .cover{position:relative;aspect-ratio:16/9;overflow:hidden}
+.scard .cover img{width:100%;height:100%;object-fit:cover;transition:.6s;filter:saturate(.9)}
+.scard:hover .cover img{transform:scale(1.07);filter:saturate(1.05)}
+.scard .dur{position:absolute;right:10px;bottom:10px;font-family:var(--mono);font-size:11.5px;background:rgba(0,0,0,.78);color:var(--paper);padding:2px 8px;letter-spacing:.05em}
+.scard .body{padding:16px 18px 18px}
+.scard .num-tag{font-family:var(--stencil);color:var(--brass-dim);font-size:12px;letter-spacing:.26em;margin-bottom:6px}
+.scard h3{font-size:15.5px;color:var(--text);font-weight:600;line-height:1.5;min-height:3em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.scard .meta{margin-top:12px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.scard .meta .play{color:var(--brass-hi)}
+.grid-sec{background:var(--bg2)}
+.filters{max-width:1200px;margin:0 auto 10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;padding:7px 16px;border:1px solid var(--line2);color:var(--muted);cursor:pointer;background:transparent;transition:.2s}
+.tab:hover{color:var(--brass-hi);border-color:var(--brass-dim)}
+.tab.on{background:var(--brass);color:#1a1206;border-color:var(--brass);font-weight:700}
+.searchbox{display:flex;align-items:center;border:1px solid var(--line2);background:var(--panel)}
+.searchbox input{background:transparent;border:none;outline:none;color:var(--text);font-family:var(--mono);font-size:12.5px;padding:9px 12px;width:170px}
+.searchbox::before{content:'⌕';color:var(--brass-dim);padding-left:10px;font-size:14px}
+.sortrow{max-width:1200px;margin:0 auto 26px;display:flex;justify-content:flex-end;gap:8px}
+.sortbtn{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;color:var(--muted);border:1px solid transparent;background:transparent;cursor:pointer;padding:4px 8px;transition:.2s}
+.sortbtn.on{color:var(--brass-hi);border-bottom-color:var(--brass)}
+.vgrid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.vcard{position:relative;border:1px solid var(--line);background:var(--panel);transition:.3s;cursor:pointer;display:block;overflow:hidden}
+.vcard:hover{transform:translateY(-5px);border-color:var(--brass-dim);box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.vcard .cover{position:relative;aspect-ratio:16/9;overflow:hidden;background:#000}
+.vcard .cover img{width:100%;height:100%;object-fit:cover;transition:.55s;filter:saturate(.88) brightness(.95)}
+.vcard:hover .cover img{transform:scale(1.08);filter:saturate(1.06) brightness(1)}
+.vcard .cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 45%);opacity:0;transition:.3s}
+.vcard:hover .cover::after{opacity:1}
+.vcard .dur{position:absolute;right:8px;bottom:8px;font-family:var(--mono);font-size:11px;background:rgba(0,0,0,.8);color:var(--paper);padding:1px 7px;z-index:2}
+.vcard .cat-tag{position:absolute;left:8px;top:8px;z-index:2;font-family:var(--mono);font-size:10px;letter-spacing:.14em;background:rgba(11,15,12,.82);border:1px solid var(--line2);color:var(--brass);padding:2px 8px}
+.vcard .body{padding:12px 14px 14px}
+.vcard h3{font-size:13.5px;color:var(--text);font-weight:600;line-height:1.5;min-height:3.6em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:.2s}
+.vcard:hover h3{color:var(--brass-hi)}
+.vcard .meta{margin-top:10px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.vcard .meta .play{color:var(--brass-hi)}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);font-family:var(--mono);padding:60px 0;letter-spacing:.2em}
+.quote-band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:repeating-linear-gradient(-45deg,rgba(201,161,90,.03) 0 14px,transparent 14px 28px),var(--bg);text-align:center;padding:64px 6vw}
+.quote-band .q{font-family:var(--serif);font-size:clamp(20px,2.6vw,30px);color:var(--paper);letter-spacing:.1em;line-height:1.9}
+.quote-band .q b{color:var(--brass-hi)}
+.quote-band .from{margin-top:16px;font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--muted)}
+footer{padding:50px 6vw 40px;background:#080b08;border-top:1px solid var(--line);text-align:center;font-size:12.5px;color:var(--muted)}
+footer .flink{font-family:var(--stencil);letter-spacing:.24em;color:var(--brass);font-size:15px}
+footer p{margin-top:10px;line-height:1.9}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+.stagger>*{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+.stagger.in>*{opacity:1;transform:none}
+@media (max-width:1024px){.vgrid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:820px){.hero-inner{grid-template-columns:1fr;text-align:center}.avatar-wrap{margin:0 auto}.kicker{justify-content:center}.kicker::before{display:none}.motto{justify-content:center}.cta{justify-content:center}.stats-chips{justify-content:center}.databar{grid-template-columns:repeat(2,1fr)}.dcell{border-bottom:1px solid var(--line)}.series-band{grid-template-columns:1fr}.vgrid{grid-template-columns:repeat(2,1fr)}.stamp.top{right:0}}
+@media (max-width:480px){.vgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="ticker"><span>KARDS · 二战卡牌对战 · 「不止卡兹」深度杂谈 · 战地风云 · 直播日常 · 做一个有理想的人 · B站 UP主 冰某氚ICE-T · </span></div>
+<header class="hero">
+  <div class="hero-inner">
+    <div class="avatar-wrap reveal">
+      <div class="avatar-ring"></div>
+      <div class="avatar-frame"><img src="assets/avatar.webp" alt="冰某氚ICE-T"></div>
+      <div class="stamp top">机密</div>
+      <div class="stamp bot">FAN-MADE</div>
+    </div>
+    <div>
+      <div class="kicker reveal">Bilibili Creator · 空间作战日志</div>
+      <h1 class="name-cn reveal">冰某氚<em>ICE-T</em></h1>
+      <div class="name-en reveal">OPERATION LOG · 2026</div>
+      <div class="motto reveal"><b>"</b>做一个有理想的人<b>"</b></div>
+      <div class="stats-chips reveal">
+        <span class="chip"><b>44</b> 视频</span>
+        <span class="chip"><b>59.1万</b> 总播放</span>
+        <span class="chip"><b>5,845</b> 粉丝</span>
+        <span class="chip"><b>699</b> 关注</span>
+        <span class="chip"><b>Lv.6</b> 年度大会员</span>
+      </div>
+      <div class="cta reveal">
+        <a class="btn solid" href="https://space.bilibili.com/387685252" target="_blank" rel="noopener">访问主页</a>
+        <a class="btn" href="#videos">查看全部视频</a>
+      </div>
+    </div>
+  </div>
+  <div class="watermark">ICE-T</div>
+</header>
+<div class="databar">
+  <div class="dcell reveal"><div class="num">59.1万<small>PLAYS</small></div><div class="lbl">累计播放</div></div>
+  <div class="dcell reveal"><div class="num">1.3万<small>AVG</small></div><div class="lbl">平均播放</div></div>
+  <div class="dcell reveal"><div class="num">14.9<small>万</small></div><div class="lbl">最高播放</div><div class="sub">「不止卡兹」什么样的步兵…</div></div>
+  <div class="dcell reveal"><div class="num">193:06<small>MIN</small></div><div class="lbl">最长视频</div><div class="sub">【直播回放】[KARDS…</div></div>
+</div>
+<section class="series" id="series">
+  <div class="section-head reveal">
+    <div class="sec-tag">Featured Series · 招牌系列</div>
+    <div class="sec-title">「不止卡兹」<span class="en">KARDS TALKS</span></div>
+  </div>
+  <div class="series-band stagger" id="featuredGrid"></div>
+</section>
+<section class="grid-sec" id="videos">
+  <div class="section-head reveal">
+    <div class="sec-tag">Archive · 视频档案</div>
+    <div class="sec-title">全部作战记录<span class="en">44 FILES</span></div>
+  </div>
+  <div class="filters reveal">
+    <div class="tabs" id="tabs"></div>
+    <div class="searchbox"><input id="q" type="text" placeholder="搜索标题..."></div>
+  </div>
+  <div class="sortrow reveal">
+    <button class="sortbtn on" data-sort="latest">最新发布</button>
+    <button class="sortbtn" data-sort="hot">播放最多</button>
+  </div>
+  <div class="vgrid" id="grid"></div>
+</section>
+<div class="quote-band">
+  <div class="q reveal">"<b>为什么，。战地6。。，没有。刺刀？！</b>"<br>—— 来自一位认真的吐槽 UP 主</div>
+  <div class="from reveal">KARDS · BFV · LIVE · 2022—2026</div>
+</div>
+<footer>
+  <a class="flink" href="https://space.bilibili.com/387685252" target="_blank" rel="noopener">冰某氚ICE-T · 空间入口</a>
+  <p>本页面为非官方粉丝向展示页，数据来自 Bilibili 公开接口（44 个视频 · 更新于 2026-03-27）<br>尊重创作，支持正版 · 做一个有理想的人</p>
+</footer>
+<script>
+var PAGE = {"data":[{"title":"[轻剪辑]英雄主义X战地V","play":3741,"playStr":"3741","length":"00:38","lenSec":38,"date":"2026-03-27","created":1774607286,"bvid":"BV13zXKBvE5M","pic":"assets/BV13zXKBvE5M.webp","cat":"战地日常"},{"title":"「不止卡兹」听说德军要打斯大林格勒？我们来整整这小子！","play":15498,"playStr":"1.5万","length":"13:49","lenSec":829,"date":"2026-01-03","created":1767379320,"bvid":"BV17EihBMEey","pic":"assets/BV17EihBMEey.webp","cat":"不止卡兹"},{"title":"为什么，。战地6。。，没有。刺刀？！！","play":7987,"playStr":"7987","length":"03:09","lenSec":189,"date":"2025-10-25","created":1761324898,"bvid":"BV1epspzAEgE","pic":"assets/BV1epspzAEgE.webp","cat":"战地日常"},{"title":"2025“外研社·国才杯”“理解当代中国”短视频大赛 | 美丽中国 | Viewing China Through the Lens of Changchun","play":834,"playStr":"834","length":"04:41","lenSec":281,"date":"2025-09-14","created":1757860099,"bvid":"BV1ZspAzGEFM","pic":"assets/BV1ZspAzGEFM.webp","cat":"杂谈日常"},{"title":"“我见过很多宝马，但它们都......”","play":1996,"playStr":"1996","length":"00:51","lenSec":51,"date":"2025-08-19","created":1755566645,"bvid":"BV1ssYazwEnF","pic":"assets/BV1ssYazwEnF.webp","cat":"杂谈日常"},{"title":"《战地6》被黑惨了！这些吐槽点真的合理吗？","play":8061,"playStr":"8061","length":"10:01","lenSec":601,"date":"2025-08-16","created":1755344615,"bvid":"BV1fpYvzFEJq","pic":"assets/BV1fpYvzFEJq.webp","cat":"战地日常"},{"title":"「不止卡兹」那天和蓝灰师一起登陆的还有谁？","play":47565,"playStr":"4.8万","length":"08:53","lenSec":533,"date":"2025-07-09","created":1752056536,"bvid":"BV1QVGPzVEJv","pic":"assets/BV1QVGPzVEJv.webp","cat":"不止卡兹"},{"title":"震惊！某UP靠近70个卡包在更新第一天就完成了“海军”全收集","play":2988,"playStr":"2988","length":"09:33","lenSec":573,"date":"2025-06-20","created":1750395836,"bvid":"BV1shKczkEqR","pic":"assets/BV1shKczkEqR.webp","cat":"杂谈日常"},{"title":"KARDS新闻联播！","play":9545,"playStr":"9545","length":"03:56","lenSec":236,"date":"2025-05-07","created":1746629002,"bvid":"BV1o6VhzYERV","pic":"assets/BV1o6VhzYERV.webp","cat":"杂谈日常"},{"title":"「不止卡兹」那我缺的衣服这块谁给我补啊？","play":10834,"playStr":"1.1万","length":"08:27","lenSec":507,"date":"2025-05-03","created":1746262404,"bvid":"BV16dVnzkEvM","pic":"assets/BV16dVnzkEvM.webp","cat":"不止卡兹"},{"title":"「不止卡兹」不是，你俩到底啥关系啊？","play":98016,"playStr":"9.8万","length":"12:33","lenSec":753,"date":"2025-04-20","created":1745085323,"bvid":"BV1mc5bzLER8","pic":"assets/BV1mc5bzLER8.webp","cat":"不止卡兹"},{"title":"冰某氚的BA(Battlefield)日常","play":1402,"playStr":"1402","length":"03:37","lenSec":217,"date":"2025-04-05","created":1743826020,"bvid":"BV172RXY9ELc","pic":"assets/BV172RXY9ELc.webp","cat":"战地日常"},{"title":"「不止卡兹」伞兵何能被称为魔鬼？","play":46588,"playStr":"4.7万","length":"10:45","lenSec":645,"date":"2025-04-04","created":1743755819,"bvid":"BV1GSZdYcEpi","pic":"assets/BV1GSZdYcEpi.webp","cat":"不止卡兹"},{"title":"最费嗓子的打法","play":1709,"playStr":"1709","length":"03:49","lenSec":229,"date":"2025-03-15","created":1742054357,"bvid":"BV1nSQSY5EAm","pic":"assets/BV1nSQSY5EAm.webp","cat":"杂谈日常"},{"title":"「不止卡兹」什么轰炸机的外号和大坝有关？大英帝国上空最后的辉煌","play":17300,"playStr":"1.7万","length":"10:01","lenSec":601,"date":"2025-03-15","created":1741968000,"bvid":"BV1T4Q3Y1EcW","pic":"assets/BV1T4Q3Y1EcW.webp","cat":"不止卡兹"},{"title":"「不止卡兹」蓝灰师的名称有什么含义？二战中的明星部队？","play":72124,"playStr":"7.2万","length":"11:41","lenSec":701,"date":"2025-03-01","created":1740758460,"bvid":"BV1kD9uYMEG7","pic":"assets/BV1kD9uYMEG7.webp","cat":"不止卡兹"},{"title":"「不止卡兹」什么样的步兵可以被称为龙卷师？","play":149457,"playStr":"14.9万","length":"07:07","lenSec":427,"date":"2025-02-17","created":1739801484,"bvid":"BV1NZwZeTEmt","pic":"assets/BV1NZwZeTEmt.webp","cat":"不止卡兹"},{"title":"「不止卡兹」古德里安评价最好的坦克？二战初期法军的钢铁巨兽？","play":27530,"playStr":"2.8万","length":"04:32","lenSec":272,"date":"2025-02-15","created":1739555276,"bvid":"BV1XAKTe1Es1","pic":"assets/BV1XAKTe1Es1.webp","cat":"不止卡兹"},{"title":"有人说德国是这个版本最坐牢的国家","play":5956,"playStr":"5956","length":"06:05","lenSec":365,"date":"2025-02-08","created":1738948193,"bvid":"BV1MnNNeYEBT","pic":"assets/BV1MnNNeYEBT.webp","cat":"杂谈日常"},{"title":"【MISIDE】米塔直播片段剪辑","play":758,"playStr":"758","length":"17:48","lenSec":1068,"date":"2025-01-30","created":1738230220,"bvid":"BV1xNFjeyEvL","pic":"assets/BV1xNFjeyEvL.webp","cat":"直播回放"},{"title":"有人问你能不能速通KARDS苏联？","play":8293,"playStr":"8293","length":"02:03","lenSec":123,"date":"2025-01-22","created":1737546450,"bvid":"BV19ufaYAEC8","pic":"assets/BV19ufaYAEC8.webp","cat":"杂谈日常"},{"title":"直播间实况：最唐的竞技场7胜","play":660,"playStr":"660","length":"66:15","lenSec":3975,"date":"2025-01-18","created":1737214230,"bvid":"BV1R1wTeGEKa","pic":"assets/BV1R1wTeGEKa.webp","cat":"直播回放"},{"title":"评价那些评价金卡的视频频","play":31848,"playStr":"3.2万","length":"04:50","lenSec":290,"date":"2025-01-15","created":1736954283,"bvid":"BV1vBc6eAEyT","pic":"assets/BV1vBc6eAEyT.webp","cat":"杂谈日常"},{"title":"优质UP花根号十六分钟剪的烂活","play":383,"playStr":"383","length":"01:25","lenSec":85,"date":"2025-01-13","created":1736779950,"bvid":"BV1ENcUeZEFD","pic":"assets/BV1ENcUeZEFD.webp","cat":"杂谈日常"},{"title":"闪  电  战  的  救  赎","play":4225,"playStr":"4225","length":"01:13","lenSec":73,"date":"2025-01-06","created":1736115402,"bvid":"BV1Y3r3Y8EEx","pic":"assets/BV1Y3r3Y8EEx.webp","cat":"杂谈日常"},{"title":"有人说这是WARDS最会剃头的视频","play":3400,"playStr":"3400","length":"04:03","lenSec":243,"date":"2025-01-05","created":1736027864,"bvid":"BV1vdr4YyEdt","pic":"assets/BV1vdr4YyEdt.webp","cat":"杂谈日常"},{"title":"群友给我寄的东西，好喜欢！","play":304,"playStr":"304","length":"01:12","lenSec":72,"date":"2025-01-04","created":1735967696,"bvid":"BV1vmrpYeEo3","pic":"assets/BV1vmrpYeEo3.webp","cat":"杂谈日常"},{"title":"有人说卡的死没有海军？","play":7956,"playStr":"7956","length":"02:57","lenSec":177,"date":"2025-01-01","created":1735740225,"bvid":"BV1ZcrFYqEeE","pic":"assets/BV1ZcrFYqEeE.webp","cat":"杂谈日常"},{"title":"现在开始！","play":970,"playStr":"970","length":"04:43","lenSec":283,"date":"2024-12-31","created":1735631978,"bvid":"BV1Es6JYfE2G","pic":"assets/BV1Es6JYfE2G.webp","cat":"杂谈日常"},{"title":"私人举办的Kards击剑杯招人辣！（当然进群聊天也是可以的）","play":102,"playStr":"102","length":"01:31","lenSec":91,"date":"2024-11-02","created":1730526285,"bvid":"BV1uZDcYDEwh","pic":"assets/BV1uZDcYDEwh.webp","cat":"杂谈日常"},{"title":"[KARDS]顶 级 对 局","play":1651,"playStr":"1651","length":"08:15","lenSec":495,"date":"2024-10-06","created":1728189059,"bvid":"BV1AN1vY4E47","pic":"assets/BV1AN1vY4E47.webp","cat":"杂谈日常"},{"title":"【直播回放】[BF5]当KARDS玩家第一次打开战地 2024年10月01日19点场","play":104,"playStr":"104","length":"146:48","lenSec":8808,"date":"2024-10-02","created":1727869803,"bvid":"BV1oM43enEd6","pic":"assets/BV1oM43enEd6.webp","cat":"直播回放"},{"title":"直   播   事  故","play":142,"playStr":"142","length":"02:15","lenSec":135,"date":"2024-10-02","created":1727863721,"bvid":"BV1oM43enEog","pic":"assets/BV1oM43enEog.webp","cat":"杂谈日常"},{"title":"【直播回放】[BF5]当KARDS玩家第一次打开战地 2024年09月27日19点场","play":55,"playStr":"55","length":"118:01","lenSec":7081,"date":"2024-09-28","created":1727470228,"bvid":"BV1CpsfebEfu","pic":"assets/BV1CpsfebEfu.webp","cat":"直播回放"},{"title":"一些话","play":228,"playStr":"228","length":"00:29","lenSec":29,"date":"2024-09-16","created":1726441257,"bvid":"BV1bn4XeWEmU","pic":"assets/BV1bn4XeWEmU.webp","cat":"杂谈日常"},{"title":"【直播回放】[KARDS]扣666送金别4 2024年08月29日20点场","play":61,"playStr":"61","length":"83:54","lenSec":5034,"date":"2024-08-31","created":1725046494,"bvid":"BV1DQH7emEmK","pic":"assets/BV1DQH7emEmK.webp","cat":"直播回放"},{"title":"【直播回放】[KARDS]扣666送金别4 2024年08月29日21点场","play":17,"playStr":"17","length":"29:04","lenSec":1744,"date":"2024-08-31","created":1725044199,"bvid":"BV1toH7e5E6y","pic":"assets/BV1toH7e5E6y.webp","cat":"直播回放"},{"title":"【直播回放】[KARDS]扣666送金别4 2024年08月28日21点场","play":41,"playStr":"41","length":"193:06","lenSec":11586,"date":"2024-08-29","created":1724902171,"bvid":"BV1jQsgeLERR","pic":"assets/BV1jQsgeLERR.webp","cat":"直播回放"},{"title":"【直播回放】[KARDS]打打牌，聊聊天 2024年08月27日22点场","play":55,"playStr":"55","length":"146:43","lenSec":8803,"date":"2024-08-28","created":1724780197,"bvid":"BV1uQsweVEts","pic":"assets/BV1uQsweVEts.webp","cat":"直播回放"},{"title":"Kards 8.25直播回放","play":220,"playStr":"220","length":"05:07","lenSec":307,"date":"2024-08-25","created":1724579415,"bvid":"BV1jeWze4ESW","pic":"assets/BV1jeWze4ESW.webp","cat":"直播回放"},{"title":"冬天最后一只蚊子，代表着秋天的结束","play":197,"playStr":"197","length":"00:16","lenSec":16,"date":"2023-11-28","created":1701172932,"bvid":"BV1s64y1772y","pic":"assets/BV1s64y1772y.webp","cat":"杂谈日常"},{"title":"苏联无掉塔通关挑战防御据点","play":430,"playStr":"430","length":"06:20","lenSec":380,"date":"2023-02-10","created":1675964606,"bvid":"BV1vy4y1Q7yG","pic":"assets/BV1vy4y1Q7yG.webp","cat":"杂谈日常"},{"title":"这里是冰某氚的2022年度报告视频！","play":27,"playStr":"27","length":"00:58","lenSec":58,"date":"2022-12-31","created":1672480766,"bvid":"BV1hv4y1B7Wa","pic":"assets/BV1hv4y1B7Wa.webp","cat":"杂谈日常"},{"title":"秘技.坦克消失之术","play":80,"playStr":"80","length":"00:13","lenSec":13,"date":"2022-11-12","created":1668255120,"bvid":"BV1784y1y7ni","pic":"assets/BV1784y1y7ni.webp","cat":"杂谈日常"}],"cats":["战地日常","不止卡兹","杂谈日常","直播回放"],"catCount":{"战地日常":4,"不止卡兹":9,"杂谈日常":22,"直播回放":9},"featured":[{"title":"「不止卡兹」什么样的步兵可以被称为龙卷师？","play":149457,"playStr":"14.9万","length":"07:07","lenSec":427,"date":"2025-02-17","created":1739801484,"bvid":"BV1NZwZeTEmt","pic":"assets/BV1NZwZeTEmt.webp","cat":"不止卡兹"},{"title":"「不止卡兹」不是，你俩到底啥关系啊？","play":98016,"playStr":"9.8万","length":"12:33","lenSec":753,"date":"2025-04-20","created":1745085323,"bvid":"BV1mc5bzLER8","pic":"assets/BV1mc5bzLER8.webp","cat":"不止卡兹"},{"title":"「不止卡兹」蓝灰师的名称有什么含义？二战中的明星部队？","play":72124,"playStr":"7.2万","length":"11:41","lenSec":701,"date":"2025-03-01","created":1740758460,"bvid":"BV1kD9uYMEG7","pic":"assets/BV1kD9uYMEG7.webp","cat":"不止卡兹"}]};
+var DATA = PAGE.data, CATS = PAGE.cats, CATCOUNT = PAGE.catCount, FEATURED = PAGE.featured;
+function coverCard(v){return '<a class="vcard" href="https://www.bilibili.com/video/'+v.bvid+'" target="_blank" rel="noopener"><div class="cover"><img src="'+v.pic+'" alt="'+v.title+'" loading="lazy"><span class="cat-tag">'+v.cat+'</span><span class="dur">'+v.length+'</span></div><div class="body"><h3>'+v.title+'</h3><div class="meta"><span class="play">▶ '+v.playStr+'</span><span>'+v.date+'</span></div></div></a>'}
+function seriesCard(v,i){return '<a class="scard" href="https://www.bilibili.com/video/'+v.bvid+'" target="_blank" rel="noopener"><div class="cover"><img src="'+v.pic+'" alt="'+v.title+'" loading="lazy"><span class="dur">'+v.length+'</span></div><div class="body"><div class="num-tag">FILE '+String(i+1).padStart(2,'0')+' · 不止卡兹</div><h3>'+v.title+'</h3><div class="meta"><span class="play">▶ '+v.playStr+'</span><span>'+v.date+'</span></div></div></a>'}
+var state={cat:'全部',sort:'latest',q:''};
+function renderTabs(){var el=document.getElementById('tabs');var h='<button class="tab on" data-cat="全部">全部 '+DATA.length+'</button>';CATS.forEach(function(c){h+='<button class="tab" data-cat="'+c+'">'+c+' '+CATCOUNT[c]+'</button>'});el.innerHTML=h}
+function renderGrid(){var list=DATA.filter(function(v){if(state.cat!=='全部'&&v.cat!==state.cat)return false;if(state.q&&v.title.toLowerCase().indexOf(state.q.toLowerCase())<0)return false;return true});list.sort(function(a,b){return state.sort==='hot'?b.play-a.play:b.created-a.created});var el=document.getElementById('grid');if(!list.length){el.innerHTML='<div class="empty">— 未找到匹配记录 —</div>';return}el.innerHTML=list.map(coverCard).join('')}
+function renderFeatured(){document.getElementById('featuredGrid').innerHTML=FEATURED.map(seriesCard).join('')}
+document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(!b)return;state.cat=b.dataset.cat;document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t===b)});renderGrid()});
+document.querySelectorAll('.sortbtn').forEach(function(b){b.addEventListener('click',function(){state.sort=b.dataset.sort;document.querySelectorAll('.sortbtn').forEach(function(x){x.classList.toggle('on',x===b)});renderGrid()})});
+var qEl=document.getElementById('q');qEl.addEventListener('input',function(){state.q=qEl.value;renderGrid()});
+var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}})},{threshold:0.12});
+document.querySelectorAll('.reveal,.stagger').forEach(function(el){io.observe(el)});
+renderTabs();renderFeatured();renderGrid();
+</script>
+</body>
+</html>
